@@ -52,9 +52,6 @@ function Dashboard() {
   const [filterValue, setFilterValue] = useState('Today');
   const [filter1Value, setFilter1Value] = useState('Category');
   const dispatch = useDispatch();
-
-  console.log('dashboardData...');
-  console.log(dashboardData);
   const fetchDashboardDataForSelectedValue = async value => {
     try {
       setRefreshing(true); // Set refreshing to true when fetching new data

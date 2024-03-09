@@ -237,7 +237,11 @@ function Dashboard() {
                   }}
                 />
                 <Text style={{color: value, fontSize: 13, fontWeight: '500'}}>
-                  {key} ({dashboardData.filter(f => f.Category === key).length})
+                  {key} (
+                  {dashboardData
+                    .filter(f => f.Category === key)
+                    .reduce((prev, curr) => prev + curr.Price, 0)}
+                  )
                 </Text>
               </View>
             ))}

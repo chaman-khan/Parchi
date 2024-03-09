@@ -47,6 +47,8 @@ function Dashboard() {
   const [filterValue, setFilterValue] = useState('Today');
   const dispatch = useDispatch();
 
+  console.log('dashboardData...');
+  console.log(dashboardData);
   const fetchDashboardDataForSelectedValue = async value => {
     try {
       setRefreshing(true); // Set refreshing to true when fetching new data
@@ -149,7 +151,7 @@ function Dashboard() {
         <Text style={styles.totalText}>
           <Text style={styles.totalTextTag}>Rs.</Text>
           {'\t'}
-          {item.totalPrice}/-
+          {Math.round(item.totalPrice)}/-
         </Text>
       </View>
     );
@@ -238,9 +240,11 @@ function Dashboard() {
                 />
                 <Text style={{color: value, fontSize: 13, fontWeight: '500'}}>
                   {key} (
-                  {dashboardData
-                    .filter(f => f.Category === key)
-                    .reduce((prev, curr) => prev + curr.Price, 0)}
+                  {Math.round(
+                    dashboardData
+                      .filter(f => f.Category === key)
+                      .reduce((prev, curr) => prev + curr.Price, 0),
+                  )}
                   )
                 </Text>
               </View>
@@ -250,7 +254,7 @@ function Dashboard() {
       </View>
 
       <FlatList
-        data={groupAndCalculateTotalPrice(dashboardData)}
+        data={groupAndCalculateTotalPrice(dashboardData).reverse()}
         keyExtractor={item => item.Cart_ID}
         style={{
           backgroundColor: 'white',

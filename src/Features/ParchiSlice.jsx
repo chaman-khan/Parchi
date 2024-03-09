@@ -135,7 +135,16 @@ export const handleGetProfile = (userID, onSuccessGetData, onErrorGetData) => {
 
       const result = await response.json();
       if (result) {
-        dispatch(saveProfile(result));
+        dispatch(
+          saveProfile({
+            ...result,
+            Profile: {
+              ...result.Profile,
+              Logo: `${result.Profile.Logo}?${new Date()}`,
+              QR: `${result.Profile.QR}?${new Date()}`,
+            },
+          }),
+        );
         onSuccessGetData();
       } else {
         onErrorGetData();

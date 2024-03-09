@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Dimensions,
   StyleSheet,
-  TextInput,
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -18,7 +17,6 @@ import {useSnackbar} from '../Components/CustomSnackBar';
 import {CustomInputField} from './AddProduct';
 import {useDispatch, useSelector} from 'react-redux';
 import {handleGetProfile, handleInvoice} from '../Features/ParchiSlice';
-import {useFocusEffect} from '@react-navigation/native';
 
 const {width, height} = Dimensions.get('screen');
 
@@ -29,19 +27,18 @@ const Invoice = ({navigation}) => {
   const userId = useSelector(state => state.pin.userId);
   const {profile} = useSelector(state => state.app);
   const [message, setMessage] = useState(profile?.Profile?.InvoiceMessage);
-  // const logo1 = profile.Profile.Logo;
-  const [logo, setLogo] = useState(profile?.Profile?.Logo);
-  const [QR, setQR] = useState(profile?.Profile?.QR);
+
+  const [logo, setLogo] = useState({
+    uri: profile?.Profile?.Logo,
+  });
+  const [QR, setQR] = useState({uri: profile?.Profile?.QR});
 
   useEffect(() => {
     GetProfile();
   }, []);
 
   const GetProfile = () => {
-    console.log(userId);
     dispatch(handleGetProfile(userId, onSuccessGetData, onErrorGetData));
-    console.log('profile');
-    console.log(profile);
   };
 
   const onSuccessGetData = () => {
@@ -52,115 +49,39 @@ const Invoice = ({navigation}) => {
     showSnackbar('Error : Check Internet!', 'red');
   };
 
-  const handlePickingImage = () => {
+  const handlePickingImage = setValue => {
     ImagePicker.openPicker({
       mediaType: 'photo',
       multiple: false,
       includeBase64: true,
     }).then(data => {
-      // Convert the selected image to base64
-      convertToBase64(data.path)
-        .then(base64 => {
-          setLogo(base64);
-        })
-        .catch(error => {
-          console.error('Error converting image to base64:', error);
-        });
+      setValue({uri: `data:image;base64,${data.data}`, converted: true});
     });
   };
-
-  const handlePickingImage1 = () => {
-    ImagePicker.openPicker({
-      mediaType: 'photo',
-      multiple: false,
-      includeBase64: true,
-    }).then(data => {
-      // Convert the selected image to base64
-      convertToBase64(data.path)
-        .then(base64 => {
-          setQR(base64);
-        })
-        .catch(error => {
-          console.error('Error converting image to base64:', error);
-        });
-    });
-  };
-
-  const convertToBase64 = imagePath => {
-    return new Promise((resolve, reject) => {
-      fetch(imagePath)
-        .then(response => response.blob())
-        .then(blob => {
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = () => {
-            const base64data = reader.result;
-            resolve(base64data);
-          };
-        })
-        .catch(error => {
-          reject(error);
-        });
-    });
-  };
-
-  // const handlePickingImage = () => {
-  //   ImagePicker.openPicker({
-  //     mediaType: 'photo',
-  //     multiple: false,
-  //     includeBase64: true,
-  //   }).then(data => {
-  //     setLogo(data.path);
-  //     // setValue({
-  //     //   uri: data.path,
-  //     //   name: data.path.split('/').pop(),
-  //     //   type: data.mime,
-  //     // });
-  //   });
-  // };
-
-  // const handlePickingImage1 = () => {
-  //   ImagePicker.openPicker({
-  //     mediaType: 'photo',
-  //     multiple: false,
-  //     includeBase64: true,
-  //   }).then(data => {
-  //     setQR(data.path);
-  //   });
-  // };
 
   const saveIt = () => {
-    if (message.length === 0 || logo === '' || QR === '') {
+    if (message.length === 0 || logo.uri === '' || QR.uri === '') {
       showSnackbar('Please Enter all data');
       return;
     }
     let updateInvoice = {
       Business_ID: userId, //Compulsary
       InvoiceMessage: message,
-      Logo: logo,
-      QR: QR,
+      Logo: logo.converted ? logo.uri.split(',')[1] : '',
+      QR: QR.converted ? QR.uri.split(',')[1] : '',
     };
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log('updateInvoice.........');
-    console.log(updateInvoice);
     dispatch(handleInvoice(updateInvoice, onSuccess, onError));
   };
+
   const onSuccess = res => {
     showSnackbar('Success: Invoice has been Updated', 'green');
-    navigation.goBack();
+    GetProfile();
   };
 
   const onError = err => {
     showSnackbar('Failure: Something went wrong! Reverting to old product...');
   };
+
   return (
     <View style={styles.mainContainer}>
       <CustomHeader
@@ -169,11 +90,10 @@ const Invoice = ({navigation}) => {
       />
       <CustomScrollView>
         <ImageBackground
-          // source={{uri: logo?.uri}}
-          source={{uri: logo}}
+          source={logo}
           style={styles.imageContainer}
           imageStyle={styles.imageStyle}>
-          {!logo && (
+          {logo.uri === '' && (
             <View style={styles.imageEmpty}>
               <Entypo name="plus" color={Theme.colors.primary} size={100} />
               <Text
@@ -188,14 +108,14 @@ const Invoice = ({navigation}) => {
           )}
           <TouchableOpacity
             style={styles.imagePicker}
-            onPress={() => handlePickingImage()}
+            onPress={() => handlePickingImage(setLogo)}
           />
         </ImageBackground>
         <ImageBackground
-          source={{uri: QR}}
+          source={QR}
           style={styles.imageContainer}
           imageStyle={styles.imageStyle}>
-          {!QR && (
+          {QR.uri === '' && (
             <View style={styles.imageEmpty}>
               <Entypo name="plus" color={Theme.colors.primary} size={100} />
               <Text
@@ -210,7 +130,7 @@ const Invoice = ({navigation}) => {
           )}
           <TouchableOpacity
             style={styles.imagePicker}
-            onPress={() => handlePickingImage1()}
+            onPress={() => handlePickingImage(setQR)}
           />
         </ImageBackground>
         <CustomInputField

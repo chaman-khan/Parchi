@@ -98,8 +98,8 @@ const EditProduct = ({navigation, route}) => {
       Price: parseFloat(price.trim()),
       Business_ID: userId,
       PSID: Item.id,
-      Image_Data: Item.Image,
-      Image_Name: `${Item.Name}.jpg`,
+      Image_Data: '',
+      Image_Name: '',
     };
 
     if (imageChanged) {

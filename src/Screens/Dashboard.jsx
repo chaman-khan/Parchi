@@ -136,18 +136,6 @@ function Dashboard() {
     return result;
   };
 
-  const widthAndHeight = 120;
-  const series = [500, 500, 500];
-  const sliceColor = Object.keys(categoryColor).map(k => {
-    return k;
-  });
-  const itemDescription = [
-    {title: 'Items', color: 'black', inventory: 'Available'},
-    {title: 'Electronics', color: '#C608D1', inventory: 123},
-    {title: 'Clothing', color: '#2900A5', inventory: 321},
-    {title: 'Home', color: '#ff9100', inventory: 391},
-  ];
-
   const renderItem = ({item}) => {
     return (
       <View style={styles.itemContainer}>
@@ -155,7 +143,7 @@ function Dashboard() {
         {item.items.map(groupedItem => (
           <RowField
             title={`${groupedItem.Name} (${groupedItem.Quantity})`}
-            price={groupedItem.Category}
+            price={groupedItem.Unit_Price}
           />
         ))}
         <Text style={styles.totalText}>
@@ -249,22 +237,13 @@ function Dashboard() {
                   }}
                 />
                 <Text style={{color: value, fontSize: 13, fontWeight: '500'}}>
-                  {key}
-                  {'\t'}({dashboardData.filter(f => f.Category === key).length})
+                  {key} ({dashboardData.filter(f => f.Category === key).length})
                 </Text>
               </View>
             ))}
           </View>
         </View>
       </View>
-
-      <DropdownComponent
-        data={['Today', 'Weekly', 'Monthly']}
-        onDropdownChange={setFilterValue}
-        value={filterValue}
-        placeholder={'Today'}
-        title="Filter"
-      />
 
       <FlatList
         data={groupAndCalculateTotalPrice(dashboardData)}

@@ -53,8 +53,9 @@ const ProductsRenderItem = React.memo(
 
 const ProductsListing = ({ListButtonComponent, onPress}) => {
   const dispatch = useDispatch();
-  const {userId, logo} = useSelector(state => state.pin);
-  const {products} = useSelector(state => state.app);
+  const {userId} = useSelector(state => state.pin);
+  const {products, profile} = useSelector(state => state.app);
+
   const {showSnackbar} = useSnackbar();
 
   const [search, setSearch] = useState('');
@@ -159,7 +160,7 @@ const ProductsListing = ({ListButtonComponent, onPress}) => {
       ListHeaderComponent={
         <View>
           <Search value={search} setValue={setSearch} />
-          <Image source={{uri: logo}} style={styles.image} />
+          <Image source={{uri: profile?.Profile?.Logo}} style={styles.image} />
           <FlatList
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -280,7 +281,7 @@ const styles = StyleSheet.create({
   image: {
     width: width,
     height: 150,
-    resizeMode: 'cover',
+    resizeMode: 'contain',
     marginBottom: 15,
   },
 });

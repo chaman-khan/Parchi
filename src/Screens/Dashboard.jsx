@@ -14,6 +14,7 @@ import DropdownComponent from '../Components/Dropdown';
 import {useFocusEffect} from '@react-navigation/native';
 import Theme from '../Theme/Theme';
 import {PieChart} from 'react-native-chart-kit';
+import CustomHeader from '../Components/CustomHeader';
 
 const {width, height} = Dimensions.get('window');
 
@@ -39,12 +40,17 @@ const categoryColor = {
   Snacks: '#FD7A86',
   'Biscuits & Cookies': '#7B5FFD',
 };
+const PrintStatusColor = {
+  Save: '#31BD5F',
+  Print: '#FD7A86',
+};
 
 function Dashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const dashboardData = useSelector(state => state.app.dashboardData);
   const {userId} = useSelector(state => state.pin);
   const [filterValue, setFilterValue] = useState('Today');
+  const [filter1Value, setFilter1Value] = useState('Category');
   const dispatch = useDispatch();
 
   console.log('dashboardData...');
@@ -173,6 +179,7 @@ function Dashboard() {
       }}>
       <View style={styles.container} className="bg-white">
         <View>
+          <Text style={styles.title}>Sales</Text>
           <View
             style={{
               flexDirection: 'row',
@@ -180,7 +187,6 @@ function Dashboard() {
               justifyContent: 'space-between',
               marginTop: 30,
             }}>
-            <Text style={styles.title}>Sales</Text>
             <DropdownComponent
               data={['Today', 'Weekly', 'Monthly']}
               onDropdownChange={setFilterValue}
@@ -189,67 +195,145 @@ function Dashboard() {
               title="Filter"
               isRow
             />
+            <DropdownComponent
+              data={['Category', 'Print']}
+              onDropdownChange={setFilter1Value}
+              value={filter1Value}
+              placeholder={'Category'}
+              title="Filter"
+              isRow
+            />
           </View>
 
-          <PieChart
-            data={Object.entries(categoryColor).map(([key, value]) => {
-              return {
-                name: `${key} (${
-                  dashboardData.filter(f => f.Category === key).length
-                })`,
-                population: dashboardData.filter(f => f.Category === key)
-                  .length,
-                color: value,
-                legendFontColor: value,
-                legendFontSize: 12,
-              };
-            })}
-            width={width - 10}
-            height={210}
-            chartConfig={{
-              backgroundColor: '#e26a00',
-              backgroundGradientFrom: '#fb8c00',
-              backgroundGradientTo: '#ffa726',
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-            }}
-            accessor={'population'}
-            backgroundColor={'transparent'}
-            // paddingLeft={'35'}
-            center={[0, 0]}
-            hasLegend={false}
-          />
-          <View
-            className="mt-10"
-            style={{position: 'absolute', right: 10, bottom: 50}}>
-            {Object.entries(categoryColor).map(([key, value]) => (
+          {filter1Value === 'Category' && (
+            <View>
+              <PieChart
+                data={Object.entries(categoryColor).map(([key, value]) => {
+                  return {
+                    name: `${key} (${
+                      dashboardData.filter(f => f.Category === key).length
+                    })`,
+                    population: dashboardData.filter(f => f.Category === key)
+                      .length,
+                    color: value,
+                    legendFontColor: value,
+                    legendFontSize: 12,
+                  };
+                })}
+                width={width - 10}
+                height={210}
+                chartConfig={{
+                  backgroundColor: '#e26a00',
+                  backgroundGradientFrom: '#fb8c00',
+                  backgroundGradientTo: '#ffa726',
+                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(255, 255, 255, ${opacity})`,
+                }}
+                accessor={'population'}
+                backgroundColor={'transparent'}
+                // paddingLeft={'35'}
+                center={[0, 0]}
+                hasLegend={false}
+              />
+
               <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: 5,
-                }}>
-                <View
-                  className="mx-1"
-                  style={{
-                    backgroundColor: value,
-                    width: 10,
-                    height: 10,
-                    // borderRadius: 8,
-                  }}
-                />
-                <Text style={{color: value, fontSize: 13, fontWeight: '500'}}>
-                  {key} (
-                  {Math.round(
-                    dashboardData
-                      .filter(f => f.Category === key)
-                      .reduce((prev, curr) => prev + curr.Price, 0),
-                  )}
-                  )
-                </Text>
+                className="mt-10"
+                style={{position: 'absolute', right: 10, bottom: 50}}>
+                {Object.entries(categoryColor).map(([key, value]) => (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginTop: 5,
+                    }}>
+                    <View
+                      className="mx-1"
+                      style={{
+                        backgroundColor: value,
+                        width: 10,
+                        height: 10,
+                        // borderRadius: 8,
+                      }}
+                    />
+                    <Text
+                      style={{color: value, fontSize: 13, fontWeight: '500'}}>
+                      {key} (
+                      {Math.round(
+                        dashboardData
+                          .filter(f => f.Category === key)
+                          .reduce((prev, curr) => prev + curr.Price, 0),
+                      )}
+                      )
+                    </Text>
+                  </View>
+                ))}
               </View>
-            ))}
-          </View>
+            </View>
+          )}
+          {filter1Value === 'Print' && (
+            <View>
+              <PieChart
+                data={Object.entries(PrintStatusColor).map(([key, value]) => {
+                  return {
+                    name: `${key} (${
+                      dashboardData.filter(f => f.PrintStatus === key).length
+                    })`,
+                    population: dashboardData.filter(f => f.PrintStatus === key)
+                      .length,
+                    color: value,
+                    legendFontColor: value,
+                    legendFontSize: 12,
+                  };
+                })}
+                width={width - 10}
+                height={210}
+                chartConfig={{
+                  backgroundColor: '#e26a00',
+                  backgroundGradientFrom: '#fb8c00',
+                  backgroundGradientTo: '#ffa726',
+                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                  labelColor: (opacity = 1) =>
+                    `rgba(255, 255, 255, ${opacity})`,
+                }}
+                accessor={'population'}
+                backgroundColor={'transparent'}
+                // paddingLeft={'35'}
+                center={[0, 0]}
+                hasLegend={false}
+              />
+              <View
+                className="mt-10"
+                style={{position: 'absolute', right: 100}}>
+                {Object.entries(PrintStatusColor).map(([key, value]) => (
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginTop: 5,
+                    }}>
+                    <View
+                      className="mx-1"
+                      style={{
+                        backgroundColor: value,
+                        width: 10,
+                        height: 10,
+                        // borderRadius: 8,
+                      }}
+                    />
+                    <Text
+                      style={{color: value, fontSize: 13, fontWeight: '500'}}>
+                      {key} (
+                      {Math.round(
+                        dashboardData.filter(f => f.PrintStatus === key).length,
+                      )}
+                      )
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
         </View>
       </View>
 

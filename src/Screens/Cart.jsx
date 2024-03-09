@@ -205,7 +205,7 @@ const Cart = () => {
         {},
       );
 
-      saveBills('Print');
+      saveBills('P');
       dispatch(cartData(data));
       console.log('CART---------------------------->', handleArrangingProducts);
     } catch (error) {
@@ -246,7 +246,7 @@ const Cart = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => saveBills('Save')}>
+              onPress={() => saveBills('S')}>
               <Text style={styles.buttonText}>Save Bill</Text>
             </TouchableOpacity>
           </View>

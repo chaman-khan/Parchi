@@ -89,6 +89,7 @@ const Invoice = ({navigation}) => {
         onPressBack={() => navigation.goBack()}
       />
       <CustomScrollView>
+        <Text style={styles.change}>Change LOGO</Text>
         <ImageBackground
           source={logo}
           style={styles.imageContainer}
@@ -111,6 +112,7 @@ const Invoice = ({navigation}) => {
             onPress={() => handlePickingImage(setLogo)}
           />
         </ImageBackground>
+        <Text style={styles.change}>Change QR</Text>
         <ImageBackground
           source={QR}
           style={styles.imageContainer}
@@ -160,14 +162,23 @@ const styles = StyleSheet.create({
     height: height / 2.5,
     justifyContent: 'flex-end',
   },
+  change: {
+    color: Theme.colors.primary,
+    fontSize: 15,
+    fontWeight: '600',
+    marginTop: 10,
+    marginLeft: 10,
+  },
   imageStyle: {
     width: '100%',
     height: height / 4,
     resizeMode: 'contain',
     marginTop: (height / 2.5 - height / 4) / 2,
-    borderWidth: 10,
-    borderRadius: 10,
-    borderStyle: 'dashed',
+    // borderWidth: 2,
+    // borderRadius: 10,
+    // borderStyle: 'dashed',
+    // borderColor: 'black',
+    // padding: 10,
   },
   imagePicker: {
     flex: 1,

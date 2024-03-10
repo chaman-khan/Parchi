@@ -64,7 +64,6 @@ const ProductsListing = ({ListButtonComponent, onPress}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    setIsRefreshing(true);
     setShowActivity(true);
     handleGetData();
   }, []);
@@ -76,9 +75,21 @@ const ProductsListing = ({ListButtonComponent, onPress}) => {
     return ['All Products', ...uniqueCategories];
   }, [products]);
 
-  const handleGetData = () => {
-    setShowActivity(true);
-    dispatch(handleGetProducts(userId, onSuccessGetData, onErrorGetData));
+  const handleGetData = async () => {
+    try {
+      setIsRefreshing(true);
+      setShowActivity(true);
+      await dispatch(
+        handleGetProducts(userId, onSuccessGetData, onErrorGetData),
+      );
+
+      console.log('Fetch successful');
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      setIsRefreshing(false);
+    } finally {
+      setIsRefreshing(false); // Stop refreshing indicator
+    }
   };
 
   const onSuccessGetData = () => {

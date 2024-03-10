@@ -206,7 +206,6 @@ const Cart = () => {
       );
 
       saveBills('P');
-      dispatch(cartData(data));
       console.log('CART---------------------------->', handleArrangingProducts);
     } catch (error) {
       console.error('Error printing bill:', error);

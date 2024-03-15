@@ -11,7 +11,7 @@ import {
   Image,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {handleGetProducts} from '../Features/ParchiSlice';
+import {handleGetProducts, handleGetProfile} from '../Features/ParchiSlice';
 import {Search} from '../Components/Search';
 import Theme from '../Theme/Theme';
 import {useSnackbar} from '../Components/CustomSnackBar';
@@ -64,9 +64,17 @@ const ProductsListing = ({ListButtonComponent, onPress}) => {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
-    setShowActivity(true);
     handleGetData();
-  }, []);
+    GetProfile();
+  }, [userId]);
+
+  const GetProfile = () => {
+    console.log(userId);
+    dispatch(handleGetProfile(userId, onSuccessGetData1, onErrorGetData1));
+  };
+  const onSuccessGetData1 = () => {};
+
+  const onErrorGetData1 = () => {};
 
   const totalCategories = useMemo(() => {
     const uniqueCategories = [
@@ -82,8 +90,6 @@ const ProductsListing = ({ListButtonComponent, onPress}) => {
       await dispatch(
         handleGetProducts(userId, onSuccessGetData, onErrorGetData),
       );
-
-      console.log('Fetch successful');
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
       setIsRefreshing(false);
